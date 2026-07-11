@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
   { href: '/', label: '홈' },
+  { href: '/onboarding', label: '온보딩' },
   { href: '/chat', label: '챗봇' },
   { href: '/places', label: '장소' },
   { href: '/trip', label: '경로' },
