@@ -13,6 +13,8 @@ interface NaverMapProps {
   destination?: GeoPoint | null
   routePoints?: GeoPoint[]
   height?: number
+  /** true면 부모 컨테이너를 꽉 채우고(h-full) 테두리/둥근 모서리 없이 렌더링 */
+  fullBleed?: boolean
 }
 
 export default function NaverMap({
@@ -20,6 +22,7 @@ export default function NaverMap({
   destination,
   routePoints = [],
   height = 400,
+  fullBleed = false,
 }: NaverMapProps) {
   const mapElRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<naver.maps.Map | null>(null)
@@ -94,12 +97,14 @@ export default function NaverMap({
     }
   }, [sdkLoaded, origin, destination, routePoints])
 
+  const placeholderClassName = fullBleed
+    ? 'flex h-full w-full items-center justify-center bg-slate-100 text-sm text-slate-400'
+    : 'flex items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400'
+  const placeholderStyle = fullBleed ? undefined : { height }
+
   if (config.disableNaverMap) {
     return (
-      <div
-        className="flex items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400"
-        style={{ height }}
-      >
+      <div className={placeholderClassName} style={placeholderStyle}>
         지도 비활성화됨 (NEXT_PUBLIC_DISABLE_NAVER_MAP=true)
       </div>
     )
@@ -107,14 +112,16 @@ export default function NaverMap({
 
   if (!config.naverMapKeyId) {
     return (
-      <div
-        className="flex items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400"
-        style={{ height }}
-      >
+      <div className={placeholderClassName} style={placeholderStyle}>
         NEXT_PUBLIC_NAVER_MAP_NCP_KEY_ID가 설정되지 않았습니다
       </div>
     )
   }
+
+  const mapDivClassName = fullBleed
+    ? 'h-full w-full'
+    : 'w-full rounded-lg border border-slate-200'
+  const mapDivStyle = fullBleed ? undefined : { height }
 
   return (
     <>
@@ -124,11 +131,7 @@ export default function NaverMap({
         onLoad={() => setSdkLoaded(true)}
         onError={() => console.error('네이버 지도 SDK 로드 실패')}
       />
-      <div
-        ref={mapElRef}
-        style={{ height }}
-        className="w-full rounded-lg border border-slate-200"
-      />
+      <div ref={mapElRef} style={mapDivStyle} className={mapDivClassName} />
     </>
   )
 }
