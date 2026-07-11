@@ -1,5 +1,5 @@
 'use client'
-
+import NaverMap from '@/components/map/NaverMap'
 import { useState } from 'react'
 import { previewRoute } from '@/api/debug'
 import type { RoutePreviewResponse } from '@/types/debug'
@@ -56,6 +56,9 @@ export default function TripPage() {
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
+      {result && (
+       <NaverMap origin={result.origin} destination={result.destination} />
+      )}
 
       {result && (
         <div className="grid gap-3 sm:grid-cols-2">
