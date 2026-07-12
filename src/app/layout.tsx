@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Header from '@/components/layout/Header'
+import PhoneFrame from '@/components/layout/PhoneFrame'
+import AppChrome from '@/components/layout/AppChrome'
 
 export const metadata: Metadata = {
   title: '접근성 경로 추천',
@@ -15,9 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="min-h-screen bg-slate-50 antialiased">
-        <Header />
-        <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+      <body className="antialiased">
+        <PhoneFrame>
+          <AppChrome>{children}</AppChrome>
+        </PhoneFrame>
       </body>
     </html>
   )

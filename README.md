@@ -39,14 +39,36 @@ src/
   components/
     layout/     Header (client component, usePathname 기반 active nav)
     common/     StatusBadge 등 공용 컴포넌트
+    map/        NaverMap — Naver Maps SDK 로드 + 마커/경로선 렌더링
   app/
-    layout.tsx  루트 레이아웃 (Header 포함)
+    layout.tsx  루트 레이아웃 (PhoneFrame + Header 포함)
     page.tsx    홈 — /api/health 상태 표시
+    onboarding/ 프로필(휠체어 종류/이동거리/컨디션/피하고 싶은 조건) 온보딩 폼 — 로컬(localStorage) 저장
+    search/     지도 배경 + 음성/텍스트 목적지 입력 화면 → /trip?q=으로 이동
     chat/       /api/chat/turn 기반 간단 챗봇 UI
     places/     /api/places 목록/검색 + 신뢰도 배지
-    trip/       /api/debug/routes/preview 기반 직접 경로 파싱 미리보기
+    trip/       /api/debug/routes/preview 기반 직접 경로 파싱 미리보기 + 지도(출발/도착 마커)
+                /search에서 넘어온 ?q= 쿼리가 있으면 자동 실행
   config.ts     NEXT_PUBLIC_* 환경변수 접근 모듈
+  lib/          onboarding-storage.ts 등 유틸
 ```
+
+## 폰 프레임 (PhoneFrame)
+
+디자인이 모바일 앱 목업이라, 데스크톱 브라우저(발표/심사용)에서는 `src/components/layout/PhoneFrame.tsx`가
+휴대폰처럼 보이는 프레임(테두리+노치)을 씌운다. 실제 모바일 화면(Tailwind `sm` 미만, 640px 미만)에서는
+프레임 없이 화면을 꽉 채운다. `search` 페이지처럼 `position: fixed`로 전체화면을 덮는 화면도
+`transform` containing block 트릭 덕분에 데스크톱에서 폰 프레임 안에만 표시된다.
+
+## Naver Map 연동
+
+- `src/components/map/NaverMap.tsx`: `next/script`로 SDK를 로드하고(`ncpKeyId` 쿼리 파라미터 사용),
+  `origin`/`destination`/`routePoints` props로 마커·폴리라인을 그린다.
+- `NEXT_PUBLIC_DISABLE_NAVER_MAP=true`면 지도 대신 안내 문구만 표시한다.
+- `NEXT_PUBLIC_NAVER_MAP_NCP_KEY_ID`가 비어있으면 마찬가지로 안내 문구만 표시한다.
+- `src/types/naver-maps.d.ts`에 SDK 전역(`window.naver.maps`) 최소 타입을 선언해뒀다 (공식 npm 타입 패키지가 없어 직접 선언).
+- 현재 `/trip` 페이지는 `/api/debug/routes/preview` 응답 기준이라 출발/도착 마커만 표시한다.
+  실제 경로선(`route_points`)은 `/api/trips/plan` 응답에만 포함되므로, 그 플로우를 붙일 때 `routePoints` prop을 채워주면 된다.
 
 ## API 연동 현황
 
@@ -63,6 +85,18 @@ src/
 `RoutePreviewResponse`, `RouteEndpoint`, `RouteDebug`, `RouteEstimateRequest`(points/option)는 팀이 공유한
 로컬 확인 명령 예시를 기준으로 타입화했다. 그 외 응답(Trip, ChatTurnResponse, Profile 등)은 명세에
 전체 필드가 확정되지 않아 `[key: string]: unknown`으로 확장 가능하게 열어두었다 — 백엔드 확정되면 타입 갱신 필요.
+
+## 페이지 / 플로우
+
+- `/` — 진입점. 로그인/온보딩 상태에 따라 `/login`, `/onboarding`, `/search`로 자동 리다이렉트
+- `/login` — 목업 로그인 (아이디/비밀번호 입력하면 무조건 로그인 처리)
+- `/onboarding` — 외출 조건 설정. 최초 1회만 노출(저장/건너뛰기 모두 완료 처리), 조건으로 profile_id 자동 매칭
+- `/search` — 지도 배경 + 음성/텍스트 목적지 입력, 제출 시 `/result?q=`로 이동
+- `/result` — `/api/trips/plan` 기반 실제 경로 결과 화면
+- `/trip` — (디버그용) `/api/debug/routes/preview` 기반 직접 경로 파싱 미리보기
+- `/status` — `/api/health` 상태 확인 (예전 홈 화면)
+- `/chat` — `/api/chat/turn` 기반 간단 챗봇 UI
+- `/places` — `/api/places` 목록/검색 + 신뢰도 배지
 
 ## 참고 — 명세의 "남은 구현" 항목
 
