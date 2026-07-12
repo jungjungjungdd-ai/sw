@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const NAV_ITEMS = [
-  { href: '/', label: '홈' },
+  { href: '/login', label: '로그인' },
   { href: '/onboarding', label: '온보딩' },
   { href: '/search', label: '목적지검색' },
   { href: '/chat', label: '챗봇' },
   { href: '/places', label: '장소' },
   { href: '/trip', label: '경로' },
+  { href: '/status', label: '상태(dev)' },
 ]
 
 export default function Header() {

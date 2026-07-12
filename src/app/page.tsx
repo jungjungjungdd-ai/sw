@@ -1,41 +1,28 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getHealth } from '@/api/health'
-import type { HealthStatus } from '@/types/health'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { loadMockUser } from '@/lib/auth-storage'
+import { hasCompletedOnboarding } from '@/lib/onboarding-storage'
 
+// 첫 진입점. 로그인/온보딩 상태를 보고 적절한 화면으로 보낸다.
+// 로그인 안 됨 → /login
+// 로그인은 됐지만 온보딩(외출 설정) 미완료 → /onboarding (최초 1회)
+// 로그인 + 온보딩 완료 → /search (목적지 검색이 사실상의 홈 화면)
 export default function HomePage() {
-  const [health, setHealth] = useState<HealthStatus | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    getHealth()
-      .then(setHealth)
-      .catch(() => setError('백엔드 상태를 불러오지 못했습니다.'))
-  }, [])
+    if (!loadMockUser()) {
+      router.replace('/login')
+      return
+    }
+    if (!hasCompletedOnboarding()) {
+      router.replace('/onboarding')
+      return
+    }
+    router.replace('/search')
+  }, [router])
 
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-slate-900">접근성 경로 추천</h1>
-      <p className="text-slate-600">
-        관광공사, 전국/경기도 장애인편의시설 데이터, 지도 POI를 결합해
-        접근성 정보를 제공합니다.
-      </p>
-
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-2 text-sm font-semibold text-slate-700">
-          백엔드 상태 (/api/health)
-        </h2>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {!error && !health && (
-          <p className="text-sm text-slate-400">확인 중...</p>
-        )}
-        {health && (
-          <pre className="overflow-auto rounded bg-slate-50 p-2 text-xs text-slate-600">
-            {JSON.stringify(health, null, 2)}
-          </pre>
-        )}
-      </div>
-    </div>
-  )
+  return <p className="p-4 text-sm text-slate-400">이동 중...</p>
 }

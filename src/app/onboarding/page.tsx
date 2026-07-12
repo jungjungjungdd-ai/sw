@@ -3,7 +3,12 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import OptionPill from '@/components/common/OptionPill'
-import { loadOnboardingProfile, saveOnboardingProfile } from '@/lib/onboarding-storage'
+import {
+  loadOnboardingProfile,
+  markOnboardingCompleted,
+  saveOnboardingProfile,
+} from '@/lib/onboarding-storage'
+import { resolveAndSaveProfileId } from '@/lib/resolve-profile'
 import {
   EMPTY_ONBOARDING_PROFILE,
   type AvoidCondition,
@@ -56,13 +61,17 @@ export default function OnboardingPage() {
     }))
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     saveOnboardingProfile(profile)
-    router.push('/')
+    // 입력한 조건(휠체어 종류 등)으로 실제 백엔드 profile_id를 추정해 저장한다.
+    await resolveAndSaveProfileId(profile)
+    markOnboardingCompleted()
+    router.push('/search')
   }
 
   const handleSkip = () => {
-    router.push('/')
+    markOnboardingCompleted()
+    router.push('/search')
   }
 
   return (

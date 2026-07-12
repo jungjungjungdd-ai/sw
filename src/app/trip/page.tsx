@@ -6,8 +6,7 @@ import { previewRoute } from '@/api/debug'
 import type { RoutePreviewResponse } from '@/types/debug'
 import { config } from '@/config'
 import NaverMap from '@/components/map/NaverMap'
-
-const DEFAULT_PROFILE_ID = 'power_basic'
+import { loadSelectedProfileId } from '@/lib/profile-storage'
 
 // /api/debug/routes/preview로 직접 경로 프롬프트 파싱 결과(출발/도착/provider)를
 // 미리 확인하는 디버그용 화면. 실제 코스 생성은 /api/trips/plan 참고.
@@ -38,7 +37,7 @@ function TripPageInner() {
     setError(null)
     try {
       const res = await previewRoute({
-        profile_id: DEFAULT_PROFILE_ID,
+        profile_id: loadSelectedProfileId(),
         request_text: text,
       })
       setResult(res)

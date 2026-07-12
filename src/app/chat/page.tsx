@@ -2,14 +2,12 @@
 
 import { useState } from 'react'
 import { sendChatTurn } from '@/api/chat'
+import { loadSelectedProfileId } from '@/lib/profile-storage'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
   text: string
 }
-
-// 기본 프로필 id는 예시값. 실제 프로필 목록은 /api/profiles에서 조회 후 선택 UI로 교체 필요.
-const DEFAULT_PROFILE_ID = 'power_basic'
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -26,7 +24,7 @@ export default function ChatPage() {
 
     try {
       const res = await sendChatTurn({
-        profile_id: DEFAULT_PROFILE_ID,
+        profile_id: loadSelectedProfileId(),
         message,
       })
       setMessages((prev) => [
