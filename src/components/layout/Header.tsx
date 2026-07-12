@@ -7,9 +7,10 @@ const NAV_ITEMS = [
   { href: '/login', label: '로그인' },
   { href: '/onboarding', label: '온보딩' },
   { href: '/search', label: '목적지검색' },
+  { href: '/result', label: '경로결과' },
   { href: '/chat', label: '챗봇' },
   { href: '/places', label: '장소' },
-  { href: '/trip', label: '경로' },
+  { href: '/trip', label: '경로(디버그)' },
   { href: '/status', label: '상태(dev)' },
 ]
 

@@ -15,7 +15,7 @@ export default function SearchPage() {
   const handleSubmit = () => {
     const q = text.trim()
     if (!q) return
-    router.push(`/trip?q=${encodeURIComponent(q)}`)
+    router.push(`/result?q=${encodeURIComponent(q)}`)
   }
 
   const handleVoiceInput = () => {
