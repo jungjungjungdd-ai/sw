@@ -21,4 +21,8 @@ export default function OptionPill({ label, selected, onClick }: OptionPillProps
       {label}
     </button>
   )
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f245eea693640518399e0044f04d59336a691b24

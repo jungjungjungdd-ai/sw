@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import OptionPill from '@/components/common/OptionPill'
 import {
+<<<<<<< HEAD
   AVOID_OPTIONS,
   CONDITION_OPTIONS,
   DISTANCE_OPTIONS,
   WHEELCHAIR_OPTIONS,
 } from '@/lib/onboarding-options'
 import {
+=======
+>>>>>>> f245eea693640518399e0044f04d59336a691b24
   loadOnboardingProfile,
   markOnboardingCompleted,
   saveOnboardingProfile,
@@ -18,9 +21,43 @@ import { resolveAndSaveProfileId } from '@/lib/resolve-profile'
 import {
   EMPTY_ONBOARDING_PROFILE,
   type AvoidCondition,
+<<<<<<< HEAD
   type OnboardingProfile,
 } from '@/types/onboarding'
 
+=======
+  type MovableDistanceM,
+  type OnboardingProfile,
+  type TodayCondition,
+  type WheelchairType,
+} from '@/types/onboarding'
+
+const WHEELCHAIR_OPTIONS: { value: WheelchairType; label: string }[] = [
+  { value: 'power', label: '전동휠체어' },
+  { value: 'manual', label: '수동휠체어' },
+  { value: 'none', label: '미보유' },
+]
+
+const DISTANCE_OPTIONS: { value: MovableDistanceM; label: string }[] = [
+  { value: 300, label: '300m' },
+  { value: 500, label: '500m' },
+  { value: 1000, label: '1km' },
+]
+
+const CONDITION_OPTIONS: { value: TodayCondition; label: string }[] = [
+  { value: 'good', label: '좋음' },
+  { value: 'normal', label: '보통' },
+  { value: 'hard', label: '힘든 이동 어려움' },
+]
+
+const AVOID_OPTIONS: { value: AvoidCondition; label: string }[] = [
+  { value: 'steep_slope', label: '급경사 있음' },
+  { value: 'steep_slope_severe', label: '경사 심함' },
+  { value: 'no_accessible_restroom', label: '장애인 화장실 없음' },
+  { value: 'rainy_day', label: '비 오는 날 이동' },
+]
+
+>>>>>>> f245eea693640518399e0044f04d59336a691b24
 export default function OnboardingPage() {
   const router = useRouter()
   const [profile, setProfile] = useState<OnboardingProfile>(EMPTY_ONBOARDING_PROFILE)
@@ -44,12 +81,20 @@ export default function OnboardingPage() {
     // 입력한 조건(휠체어 종류 등)으로 실제 백엔드 profile_id를 추정해 저장한다.
     await resolveAndSaveProfileId(profile)
     markOnboardingCompleted()
+<<<<<<< HEAD
     router.push('/explore')
+=======
+    router.push('/search')
+>>>>>>> f245eea693640518399e0044f04d59336a691b24
   }
 
   const handleSkip = () => {
     markOnboardingCompleted()
+<<<<<<< HEAD
     router.push('/explore')
+=======
+    router.push('/search')
+>>>>>>> f245eea693640518399e0044f04d59336a691b24
   }
 
   return (
@@ -90,6 +135,7 @@ export default function OnboardingPage() {
             />
           ))}
         </div>
+<<<<<<< HEAD
         {/* 프리셋 이상으로 더 이동하고 싶은 사람도 있어서 직접 입력도 열어둔다 */}
         <div className="flex items-center gap-2 pt-1">
           <input
@@ -114,6 +160,8 @@ export default function OnboardingPage() {
           />
           <span className="text-xs text-slate-400">m 단위로 직접 입력 가능</span>
         </div>
+=======
+>>>>>>> f245eea693640518399e0044f04d59336a691b24
       </section>
 
       <section className="space-y-2">

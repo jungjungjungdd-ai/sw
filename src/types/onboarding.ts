@@ -4,8 +4,12 @@
 
 export type WheelchairType = 'power' | 'manual' | 'none'
 
+<<<<<<< HEAD
 // 프리셋(300m/500m/1km...) 외에 직접 입력도 가능해야 해서 리터럴 유니온이 아닌 number로 둔다.
 export type MovableDistanceM = number
+=======
+export type MovableDistanceM = 300 | 500 | 1000
+>>>>>>> f245eea693640518399e0044f04d59336a691b24
 
 export type TodayCondition = 'good' | 'normal' | 'hard'
 
@@ -27,4 +31,8 @@ export const EMPTY_ONBOARDING_PROFILE: OnboardingProfile = {
   movableDistanceM: null,
   todayCondition: null,
   avoidConditions: [],
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f245eea693640518399e0044f04d59336a691b24
