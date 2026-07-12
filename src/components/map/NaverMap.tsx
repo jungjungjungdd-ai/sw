@@ -128,7 +128,7 @@ export default function NaverMap({
       <Script
         src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${config.naverMapKeyId}`}
         strategy="afterInteractive"
-        onLoad={() => setSdkLoaded(true)}
+        onReady={() => setSdkLoaded(true)}
         onError={() => console.error('네이버 지도 SDK 로드 실패')}
       />
       <div ref={mapElRef} style={mapDivStyle} className={mapDivClassName} />
