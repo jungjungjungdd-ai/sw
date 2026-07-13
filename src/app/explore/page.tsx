@@ -2,41 +2,43 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import AppIcon, { type AppIconName } from '@/components/common/AppIcon'
 import NaverMap from '@/components/map/NaverMap'
 import { getPlaces } from '@/api/places'
 import type { Place } from '@/types/place'
 
-const FILTERS: { value: string; label: string; icon: string }[] = [
-  { value: 'restaurant', label: '음식', icon: '🍴' },
-  { value: 'transit', label: '교통', icon: '🚌' },
-  { value: 'restroom', label: '화장실', icon: '🚻' },
-  { value: 'tour', label: '관광', icon: '📷' },
+const FILTERS: { value: string | null; label: string; icon: AppIconName }[] = [
+  { value: null, label: '전체', icon: 'mapPin' },
+  { value: 'tour', label: '관광지', icon: 'landmark' },
+  { value: 'restaurant', label: '식당', icon: 'restaurant' },
+  { value: 'cafe', label: '카페', icon: 'cafe' },
+  { value: 'restroom', label: '화장실', icon: 'restroom' },
 ]
 
-// 디자인의 "탐색" 탭. 지도를 꽉 채우고 그 위에 검색바/필터칩/장소 미리보기 카드를 띄운다.
-// GET /api/places(q, category)로 마커 후보를 가져오고, 카드를 누르면 /explore/[id] 상세로 이동한다.
 export default function ExplorePage() {
   const router = useRouter()
   const [places, setPlaces] = useState<Place[]>([])
-  // 카테고리는 선택 사항이라 처음엔 아무 것도 고르지 않은 상태(전체)로 시작한다.
   const [filter, setFilter] = useState<string | null>(null)
   const [q, setQ] = useState('')
   const [selected, setSelected] = useState<Place | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const runSearch = (category: string | null, keyword: string) => {
+  const runSearch = (category = filter, keyword = q) => {
     setLoading(true)
-    getPlaces({ category: category ?? undefined, q: keyword || undefined })
+    getPlaces({ category: category ?? undefined, q: keyword.trim() || undefined })
       .then((res) => {
         setPlaces(res)
         setSelected(res[0] ?? null)
       })
-      .catch(() => setPlaces([]))
+      .catch(() => {
+        setPlaces([])
+        setSelected(null)
+      })
       .finally(() => setLoading(false))
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 필터 바뀔 때마다 목록 재조회
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 필터 변경 시 결과를 즉시 갱신한다.
     runSearch(filter, q)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
@@ -47,46 +49,52 @@ export default function ExplorePage() {
       : undefined
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 bg-slate-100">
       <NaverMap fullBleed origin={originForMap} />
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-col gap-3 p-4">
-        <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-3 shadow">
+      <div className="pointer-events-none absolute inset-x-0 top-0 space-y-3 px-4 pt-4">
+        <form
+          className="pointer-events-auto flex min-h-14 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 shadow-lg shadow-slate-900/5"
+          onSubmit={(event) => {
+            event.preventDefault()
+            runSearch()
+          }}
+        >
+          <AppIcon name="search" className="shrink-0 text-slate-900" />
           <input
-            className="flex-1 bg-transparent text-sm outline-none"
-            placeholder="어디로 가볼까요?"
+            className="min-w-0 flex-1 bg-transparent text-[15px] text-slate-900 outline-none placeholder:text-slate-400"
+            placeholder="장소·편의시설 검색"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && runSearch(filter, q)}
           />
           <button
-            type="button"
+            type="submit"
             aria-label="검색"
-            onClick={() => runSearch(filter, q)}
-            className="text-emerald-600"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700"
           >
-            🎙️
+            <AppIcon name="search" size={18} />
           </button>
-        </div>
+        </form>
 
-        <div className="pointer-events-auto flex gap-2 overflow-x-auto pb-1">
-          {FILTERS.map((f) => (
-            <button
-              key={f.value}
-              type="button"
-              onClick={() =>
-                setFilter((prev) => (prev === f.value ? null : f.value))
-              }
-              className={`flex shrink-0 items-center gap-1 rounded-full border px-4 py-2 text-sm font-medium shadow-sm ${
-                filter === f.value
-                  ? 'border-emerald-600 bg-white text-emerald-600'
-                  : 'border-slate-200 bg-white text-slate-600'
-              }`}
-            >
-              <span>{f.icon}</span>
-              {f.label}
-            </button>
-          ))}
+        <div className="pointer-events-auto -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+          {FILTERS.map((item) => {
+            const active = filter === item.value
+            return (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => setFilter(item.value)}
+                className={`flex h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm font-semibold shadow-sm transition-colors ${
+                  active
+                    ? 'border-emerald-600 bg-white text-emerald-700'
+                    : 'border-white bg-white/95 text-slate-700'
+                }`}
+              >
+                <AppIcon name={item.icon} size={18} />
+                {item.label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -94,24 +102,25 @@ export default function ExplorePage() {
         <button
           type="button"
           onClick={() => router.push(`/explore/${selected.id}`)}
-          className="absolute inset-x-4 bottom-4 flex items-center gap-3 rounded-2xl bg-white p-3 text-left shadow-lg"
+          className="absolute inset-x-4 bottom-4 flex min-h-24 items-center gap-3 rounded-2xl bg-white p-4 text-left shadow-xl shadow-slate-900/15"
         >
-          <div className="h-14 w-14 shrink-0 rounded-xl bg-slate-100" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-slate-900">
-              {selected.name}
-            </p>
-            {selected.category && (
-              <p className="text-xs text-emerald-600">{selected.category}</p>
-            )}
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+            <AppIcon name="mapPin" size={25} />
           </div>
-          <span className="text-slate-300">›</span>
+          <div className="min-w-0 flex-1">
+            <p className="mb-1 text-xs font-semibold text-slate-500">
+              {selected.category || '주변 장소'}
+            </p>
+            <p className="truncate text-base font-bold text-slate-950">{selected.name}</p>
+            <p className="mt-1 text-xs text-emerald-700">접근성 정보 확인하기</p>
+          </div>
+          <AppIcon name="chevronRight" className="shrink-0 text-slate-400" />
         </button>
       )}
 
       {!loading && places.length === 0 && (
-        <p className="absolute inset-x-4 bottom-4 rounded-2xl bg-white p-4 text-center text-sm text-slate-400 shadow">
-          주변에서 결과를 찾지 못했습니다.
+        <p className="absolute inset-x-4 bottom-4 rounded-2xl bg-white p-5 text-center text-sm text-slate-500 shadow-lg">
+          조건에 맞는 장소를 찾지 못했어요.
         </p>
       )}
     </div>

@@ -13,7 +13,7 @@ import { buildCourseSteps, type CourseStep } from '@/lib/course-steps'
 // 저장한 코스 상세(읽기 전용). trip 원본이 남아있으면 지도/타임라인을 다시 그리고,
 // 데모 시드 데이터처럼 trip이 없으면 이름 목록만 타임라인으로 보여준다.
 export default function FavoriteCourseDetailPage() {
-  const { id } = useParams<{ id: string }>()
+  const { id = '' } = useParams<{ id: string }>() ?? {}
   const router = useRouter()
   const [saved, setSaved] = useState<SavedCourse | null>(null)
   const [favorite, setFavorite] = useState(true)

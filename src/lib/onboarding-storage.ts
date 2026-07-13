@@ -2,6 +2,7 @@ import { EMPTY_ONBOARDING_PROFILE, type OnboardingProfile } from '@/types/onboar
 
 const STORAGE_KEY = 'sw:onboarding-profile'
 const COMPLETED_KEY = 'sw:onboarding-completed'
+const REQUEST_KEY = 'sw:profile-request'
 
 export function loadOnboardingProfile(): OnboardingProfile {
   if (typeof window === 'undefined') return EMPTY_ONBOARDING_PROFILE
@@ -30,4 +31,14 @@ export function hasCompletedOnboarding(): boolean {
 export function markOnboardingCompleted(): void {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(COMPLETED_KEY, 'true')
+}
+
+export function loadProfileRequest(): string {
+  if (typeof window === 'undefined') return ''
+  return window.localStorage.getItem(REQUEST_KEY) ?? ''
+}
+
+export function saveProfileRequest(request: string): void {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(REQUEST_KEY, request.trim())
 }

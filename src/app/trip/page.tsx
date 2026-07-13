@@ -23,7 +23,7 @@ export default function TripPage() {
 
 function TripPageInner() {
   const searchParams = useSearchParams()
-  const initialQuery = searchParams.get('q') ?? ''
+  const initialQuery = searchParams?.get('q') ?? ''
 
   const [requestText, setRequestText] = useState(
     initialQuery || '한국공학대학교에서 통큰집 정왕본점 가는 경로 추천해줘',

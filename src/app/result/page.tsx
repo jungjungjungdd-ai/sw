@@ -61,7 +61,11 @@ export default function ResultPage() {
 function ResultPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const requestText = searchParams.get('q') ?? ''
+  const requestText = searchParams?.get('q') ?? ''
+  const profileRequest = searchParams?.get('pref') ?? ''
+  const planRequestText = profileRequest
+    ? `${requestText}\n\n사용자 요청사항: ${profileRequest}`
+    : requestText
 
   const [turns, setTurns] = useState<Turn[]>([])
   const [loading, setLoading] = useState(true)
@@ -76,7 +80,7 @@ function ResultPageInner() {
     }
     let cancelled = false
     setLoading(true)
-    planTrip({ profile_id: loadSelectedProfileId(), request_text: requestText })
+    planTrip({ profile_id: loadSelectedProfileId(), request_text: planRequestText })
       .then((trip) => {
         if (cancelled) return
         setTurns([{ userText: requestText, trip }])
@@ -96,7 +100,7 @@ function ResultPageInner() {
     return () => {
       cancelled = true
     }
-  }, [requestText])
+  }, [planRequestText, requestText])
 
   const lastTrip = [...turns].reverse().find((t) => t.trip)?.trip ?? null
   const course: TripCourse | undefined = lastTrip?.courses?.[0]

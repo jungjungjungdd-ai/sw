@@ -14,7 +14,7 @@ function matches(pathname: string, prefixes: string[]): boolean {
 }
 
 export default function AppChrome({ children }: { children: ReactNode }) {
-  const pathname = usePathname()
+  const pathname = usePathname() ?? ''
   const noChrome = matches(pathname, NO_CHROME_PREFIXES)
   const fullBleed = matches(pathname, FULL_BLEED_PREFIXES)
 
