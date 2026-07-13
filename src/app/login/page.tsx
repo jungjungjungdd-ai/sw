@@ -3,10 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveMockUser } from '@/lib/auth-storage'
-<<<<<<< HEAD
 import { hasCompletedOnboarding } from '@/lib/onboarding-storage'
-=======
->>>>>>> f245eea693640518399e0044f04d59336a691b24
 
 // 목업 로그인 화면. 실제 인증 서버가 없어서 아이디/비밀번호를 입력하면
 // 값 검증 없이 무조건 로그인 처리하고 온보딩(프로필 조건 입력)으로 이동한다.
@@ -17,11 +14,7 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     saveMockUser(username.trim() || 'guest')
-<<<<<<< HEAD
     router.push(hasCompletedOnboarding() ? '/explore' : '/onboarding')
-=======
-    router.push('/onboarding')
->>>>>>> f245eea693640518399e0044f04d59336a691b24
   }
 
   return (

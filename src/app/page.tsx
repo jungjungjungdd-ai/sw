@@ -21,11 +21,7 @@ export default function HomePage() {
       router.replace('/onboarding')
       return
     }
-<<<<<<< HEAD
     router.replace('/explore')
-=======
-    router.replace('/search')
->>>>>>> f245eea693640518399e0044f04d59336a691b24
   }, [router])
 
   return <p className="p-4 text-sm text-slate-400">이동 중...</p>
